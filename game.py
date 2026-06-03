@@ -6,7 +6,7 @@ game_hand=[]
 
 def generate_deck(): 
     colors=["red","green","yellow","blue"]
-    if x in colors:
+    for x in colors:
         for y in range(0,10):
             if (y<=9): 
                 deck.append(card.Card(x,y))
@@ -37,12 +37,12 @@ def assign_cards():
     for x in range(0,7): 
         player.player_hand(deck.pop(0))
 
-
-def __main__(): 
-    print(generate_deck)
-        
+def run_game(): 
+    generate_deck()
+    print_deck()
    
 
+run_game()
             
 
     
