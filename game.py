@@ -1,4 +1,4 @@
-import card 
+import card as card_module
 import player 
 import random
 
@@ -12,18 +12,18 @@ current_turn="Player"
 def generate_deck(): 
     colors=["red","green","yellow","blue"]
     for x in colors:
-        deck.append(card.Card(x,0))
+        deck.append(card_module.Card(x,0))
 
         for y in range(1,10):
-            deck.append(card.Card(x,y))
-            deck.append(card.Card(x,y))
+            deck.append(card_module.Card(x,y))
+            deck.append(card_module.Card(x,y))
            
         for y in ["skip","reverse","draw-2","wild","wild draw-4"]: 
             if (y=="wild" or y=="wild draw-4"): 
-                deck.append(card.Card("",y))
+                deck.append(card_module.Card("",y))
             else: 
-                deck.append(card.Card(x,y))
-                deck.append(card.Card(x,y))
+                deck.append(card_module.Card(x,y))
+                deck.append(card_module.Card(x,y))
 
     print("Generated Deck!")
 
@@ -83,8 +83,9 @@ def check_for_emtpy_hand():
 
 def take_game_turn(): 
 
-    print("GAME STATS====================================")
-    print(f"Current Card: {game_stack[-1].color} {game_stack[-1].value}")
+    #print("GAME STATS====================================")
+    #print(f"Current Card: {game_stack[-1].color} {game_stack[-1].value}")
+    #print("==============================================")
 
     
     for x in game_hand: 
@@ -97,23 +98,22 @@ def take_game_turn():
             else:
                 game_hand.remove(x)
 
-            print("Game has", len(game_hand), "left!")
+            #print("Game has", len(game_hand), "left!")
             return 
 
     #did not find card, must draw 
-    if (len(deck)>0): 
-        print("Game Request To Draw...") 
+        #print("Game Request To Draw...") 
         drawn_card=deck.pop(0)
-        print("Game Drew:",drawn_card.color,drawn_card.value)
+        #print("Game Drew:",drawn_card.color,drawn_card.value)
         game_hand.append(drawn_card)
-    else: 
-        print("Deck is empty!")
+   
    
     
     
 def play_unique_card(card,current): 
    
-    if (card.value=="wild"): 
+    if (card.value=="wild" or card.value=="wild draw-4"): 
+    
         if (current=="game"): 
             target_color=""
             for x in game_hand: 
@@ -121,15 +121,22 @@ def play_unique_card(card,current):
                     target_color=x.color
 
             card.color=target_color
+            game_stack.append(card_module.Card(target_color,card.value))
             game_hand.remove(card)
 
+            take_game_turn()
+
         else: 
+            print("RAWR!")
             player_wild_choice=input("Enter red, green, yellow, or blue: ")
             card.color=player_wild_choice
             player.player_hand.remove(card)
 
+            take_player_turn()
+
     elif (card.value=="draw-2"): 
         if (current=="game"): 
+            print("+2 Cards")
             player.player_hand.append(deck.pop(0))
             player.player_hand.append(deck.pop(0))
 
@@ -137,65 +144,63 @@ def play_unique_card(card,current):
             take_game_turn()
         else: 
 
-           
+            
             game_hand.append(deck.pop(0))
             game_hand.append(deck.pop(0))
             player.player_hand.remove(card)
             take_player_turn()
 
     elif (card.value=="skip"): 
-        print("Skipped!")
         if (current=="game"): 
             game_hand.remove(card)
             take_game_turn() 
-            print("Go Again!")
+        
         else: 
+            print("Skipped!")
             player.player_hand.remove(card)
             take_player_turn() 
 
     elif (card.value=="reverse"): 
-        print("Reverse!")
         if (current=="game"):
             game_hand.remove(card) 
             take_game_turn() 
         
         else: 
+            print("Reversed!")
+            
             player.player_hand.remove(card)
             take_player_turn() 
 
-    elif (card.value=="wild draw-4"): 
+    if (card.value=="wild draw-4"): 
         if (current=="game"): 
+            print("+4 Cards")
             player.player_hand.append(deck.pop(0))
             player.player_hand.append(deck.pop(0))
             player.player_hand.append(deck.pop(0))
             player.player_hand.append(deck.pop(0))
 
-            game_hand.remove(card)
+            print_hand(player.player_hand)
+
+           # game_hand.remove(card)
             take_game_turn()
         else: 
-
-           
             game_hand.append(deck.pop(0))
             game_hand.append(deck.pop(0))
             game_hand.append(deck.pop(0))
             game_hand.append(deck.pop(0))
 
-            player.player_hand.remove(card)
+            #player.player_hand.remove(card)
             take_player_turn()
-
-
-
-
-    
-
         
 def take_player_turn(): 
-    print("PLAYER STATS ==============================================================================")
+    print("PLAYER TURN===========================")
     print(f"Current Card: {game_stack[-1].color} {game_stack[-1].value}")
+    print("======================================")
     
     print_hand(player.player_hand)
-
-    card_play=int(input("Enter a card number to play (1-" + str(len(player.player_hand)) + " or (0) to draw a card: ")) 
+    
+    print("======================================")
+    card_play=int(input("Enter a card number to play (1-" + str(len(player.player_hand)) + ") or (0) to draw a card: "))
     if (card_play==0): 
 
         print("Player Request To Draw...") 
@@ -218,10 +223,11 @@ def take_player_turn():
             if (isinstance(player.player_hand[card_play-1].value, str)): 
                 current_card=player.player_hand[card_play-1]
                 play_unique_card(current_card,"player")
+
             else:
                 player.player_hand.pop(card_play-1)
 
-            print("Player has", len(player.player_hand))
+           
 
         else: 
             print("Invalid->Try Again")
@@ -243,8 +249,6 @@ def run_game():
     #pull first card off the stack 
     first_card=deck.pop(0)
     game_stack.append(first_card)
-
-    
 
     while not check_for_emtpy_hand(): 
         take_player_turn()
