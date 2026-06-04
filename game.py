@@ -127,7 +127,7 @@ def play_unique_card(card,current):
             take_game_turn()
 
         else: 
-            print("RAWR!")
+            #print("Debugging Stament ")
             player_wild_choice=input("Enter red, green, yellow, or blue: ")
             card.color=player_wild_choice
             player.player_hand.remove(card)
