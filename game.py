@@ -91,14 +91,16 @@ def take_game_turn():
     for x in game_hand: 
         if (check_if_valid_play(x)):
             print("Game Played: ", x.color, x.value) 
-            game_stack.append(x)
 
             if (isinstance(x.value, str)):
                 play_unique_card(x,"game") 
+                #print("Game has", len(game_hand)-1, "left!")
             else:
+                game_stack.append(x)
                 game_hand.remove(x)
+                #print("Game has", len(game_hand), "left!")
 
-            #print("Game has", len(game_hand), "left!")
+            print("Game has", len(game_hand)-1, "left!")
             return 
 
     #did not find card, must draw 
@@ -143,8 +145,6 @@ def play_unique_card(card,current):
             game_hand.remove(card)
             take_game_turn()
         else: 
-
-            
             game_hand.append(deck.pop(0))
             game_hand.append(deck.pop(0))
             player.player_hand.remove(card)
@@ -245,11 +245,20 @@ def run_game():
     generate_deck()
     shuffle_deck()
     #print_deck()
+    #print_hand(game_hand)
     assign_cards()
 
     #pull first card off the stack 
-    first_card=deck.pop(0)
-    game_stack.append(first_card)
+
+    starting_card=None 
+    print(len(deck))
+    for x in range(len(deck)): 
+        print(x)
+        if (deck[x].value !="wild" and deck[x].value != "wild draw-4"): 
+            starting_card=deck.pop(x)
+            break
+
+    game_stack.append(starting_card)
 
     while not check_for_emtpy_hand(): 
         take_player_turn()
