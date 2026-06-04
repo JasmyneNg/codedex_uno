@@ -152,11 +152,12 @@ def play_unique_card(card,current):
 
     elif (card.value=="skip"): 
         if (current=="game"): 
+            print("Skipped!")
             game_hand.remove(card)
             take_game_turn() 
         
         else: 
-            print("Skipped!")
+            
             player.player_hand.remove(card)
             take_player_turn() 
 
@@ -203,9 +204,9 @@ def take_player_turn():
     card_play=int(input("Enter a card number to play (1-" + str(len(player.player_hand)) + ") or (0) to draw a card: "))
     if (card_play==0): 
 
-        print("Player Request To Draw...") 
+        #print("Player Request To Draw...") 
         drawn_card=deck.pop(0)
-        print("Player Drew:",drawn_card.color,drawn_card.value)
+        #print("Player Drew:",drawn_card.color,drawn_card.value)
         player.player_hand.append(drawn_card)
 
 
